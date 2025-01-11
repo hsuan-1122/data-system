@@ -226,34 +226,35 @@ while(True):
     elif question == 'R':
         ## 讓使用者決定欲使用之部分
         pattern = int(input("請選擇所需資料模式(1)所有資料(2)以人名提取資料(3)以年級提取資料(4)以問卷提取資料(5)選擇不同問卷的受測者名單: "))
-        ##r_id()
-        ##for i in range(len(output_data)):
-            ##r_data(i)
-        ##決定模式選擇
+        r_id()
+        ## num stands for total sheet we have
+        num = r_data()
+        ## 印出所有資料
         if pattern == 1:
             print("所有資料:\n")
-            output_all_data()
+            ## 最外層迴圈 : 以學生人數計數
+            for id in range(len(output_id[0])) :
+                ## 印出學生資訊(帳號 + 姓名)
+                print(output_id[0][id] + ' ' + output_id[1][id], end = '')
+                ## 印出此學生擁有的一串資料
+                for i in range(num) :
+                    output_data(i,id)
+                ## 換行
+                print("\n")
+        ## 以人名提取資料
         elif pattern == 2:
             ## user enter data's name they want
             name = str(input("請輸入欲搜尋之人名: "))
-            ## find which index is the name
-            ## open stu_name.txt, put them into output[1](name list)
-            with open('stu_name.txt', 'r', encoding="utf-8") as file:
-                output_id[1].clear()
-                for line in file.readlines():
-                    output_id[1].append(line[:-1]) 
-            ## find its index      
+            ## find which index is the name    
             index = output_id[1].index(name)
-            ## print out student account / id / and statistic (combined all survey)
+            ## print out student's id (account and name)
             print(output_id[0][index] + ' ' + output_id[1][index], end = '')
-            for i in range(2):
-                if output_data[i] != []:
-                    print(' ', end = '')
-                    print(output_data[i][index], end = '')
+            ## print out student's data
+            ## 4 grades
+            for i in range(num) :
+                output_data(i,index)
             print('\n')
-            ## clear output list, prepared for further survey
-            output_id.clear()
-            output_data.clear()
+            
         elif pattern == 3 :
             while(True):
                 pattern = int(input("請選擇年級(1)大一(2)大二: "))
