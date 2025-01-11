@@ -16,17 +16,6 @@ survey = 0
 grade = 0
 classname = 0
 
-## 開啟survey.txt 和 class_name.txt, 塞到list(survey, classname) 裡面
-def open_survey_classname() :
-    with open('survey_name.txt', 'w', encoding="utf-8") as file:
-        survey_name.clear()
-        for line in file.readlines():
-            survey_name.append(line[:-1]) ## delete '\n'
-    with open('class_name.txt', 'w', encoding="utf-8") as file:
-        class_name.clear()
-        for line in file.readlines():
-            class_name.append(line[:-1]) ## delete '\n'
-
 ## 定位使用者資料位置(survey_name, grade, classname)
 ## function: 1. find survey name
 ##                  open "survey_name.txt" to check how many surveys we have
@@ -39,7 +28,12 @@ def locate_file():
 ## section 1: ask survey name
 ## create list survey_name by open survey_name.txt
 ## same as class name
-    open_survey_classname()
+    with open('survey_name.txt', 'r', encoding="utf-8") as file:
+        survey_name.clear()
+        for line in file.readlines():
+            survey_name.append(line[:-1]) ## delete '\n'
+    with open('class_name.json', 'r', encoding="utf-8") as file:
+        class_name = json.load(file)
     ## user
     ## ask for survey name
     print("請選擇問卷", end = '')
@@ -84,7 +78,7 @@ def w_data(n,m,l):
                 del line_account[i-x]
                 x += 1
             else:
-                blank.append('* * * * * * * * * * * *   \n')            #星號數量操作由菌菇處理
+                blank.append('* * * * * * * * * * * *   \n')            #星號數量操作由蔡蔡處理
     with open(list_id[0], 'a', encoding="utf-8") as file:
         file.writelines(line_account)
     line_account.clear()
@@ -162,25 +156,17 @@ def r_id():
             output_id[1].append(s[:-1])
 
 ## 將學生數據從資料庫中讀出
-def r_data(): 
-    output_data.clear()
-    open_survey_classname()
-    ## 紀錄不同問卷
-    count = 0
-    for i in range(len(survey_name)) :
-        for j in range(4) :
-            for k in range(len(class_name)) :
-                with open(list_data[i][j][k] + '.txt', 'r', encoding="utf-8") as file:
-                    for line in file.readlines():
-                        s = line.split(' ')
-                        for k in range(len(s)):
-                            if s[k] == '':
-                                del s[k:]
-                                break
-                        s = ' '.join(s)
-                        output_data[count].append(s)
-                        count += 1
-    return count
+def r_data(i): 
+    output_data[i].clear()
+    with open(list_data[i], 'r', encoding="utf-8") as file:
+        for line in file.readlines():
+            s = line.split(' ')
+            for k in range(len(s)):
+                if s[k] == '':
+                    del s[k:]
+                    break
+            s = ' '.join(s)
+            output_data[i].append(s)
 
 ## 將資料初始化
 def initialize_data():
