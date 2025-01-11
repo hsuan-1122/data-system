@@ -147,19 +147,25 @@ def add_new_file():
     w_data(survey_name.index(survey), grade, class_name.index(classname))
 
 ## 將學生資訊從資料庫中讀出
-def r_id():
-    output_id[0].clear()
-    output_id[1].clear()
-    with open(list_id[0], 'r', encoding="utf-8") as file:
-        for line in file.readlines():
-            s = line.split(' ')
-            s = ' '.join(s)
-            output_id[0].append(s[:-1])
-    with open(list_id[1], 'r', encoding="utf-8") as file:
-        for line in file.readlines():
-            s = line.split(' ')
-            s = ' '.join(s)
-            output_id[1].append(s[:-1])
+def r_data(): 
+    output_data.clear()
+    open_survey_classname()
+    ## 紀錄不同問卷
+    count = 0
+    for i in range(len(survey_name)) :
+        for j in range(4) :
+            for k in range(len(class_name)) :
+                with open(list_data[i][j][k] + '.txt', 'r', encoding="utf-8") as file:
+                    for line in file.readlines():
+                        s = line.split(' ')
+                        for k in range(len(s)):
+                            if s[k] == '':
+                                del s[k:]
+                                break
+                        s = ' '.join(s)
+                        output_data[count].append(s)
+                        count += 1
+    return count
 
 ## 將學生數據從資料庫中讀出
 def r_data(i): 
