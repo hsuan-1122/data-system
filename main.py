@@ -1,3 +1,5 @@
+import json
+
 ## 宣告陣列
 stu_data = []
 line_account = []
@@ -9,22 +11,11 @@ output_id = [[] for i in range(2)]
 list_data = []
 list_id = ['stu_account.txt', 'stu_name.txt']
 survey_name =[]
-class_name = []
+class_name = {}
 survey = 0
 grade = 0
 classname = 0
 
-## 開啟survey.txt 和 class_name.txt, 塞到list(survey, classname) 裡面
-def open_survey_classname() :
-    with open('survey_name.txt', 'w', encoding="utf-8") as file:
-        survey_name.clear()
-        for line in file.readlines():
-            survey_name.append(line[:-1]) ## delete '\n'
-    with open('class_name.txt', 'w', encoding="utf-8") as file:
-        class_name.clear()
-        for line in file.readlines():
-            class_name.append(line[:-1]) ## delete '\n'
-            
 ## 定位使用者資料位置(survey_name, grade, classname)
 ## function: 1. find survey name
 ##                  open "survey_name.txt" to check how many surveys we have
@@ -37,7 +28,12 @@ def locate_file():
 ## section 1: ask survey name
 ## create list survey_name by open survey_name.txt
 ## same as class name
-    open_survey_classname()
+    with open('survey_name.txt', 'r', encoding="utf-8") as file:
+        survey_name.clear()
+        for line in file.readlines():
+            survey_name.append(line[:-1]) ## delete '\n'
+    with open('class_name.json', 'r', encoding="utf-8") as file:
+        class_name = json.load(file)
     ## user
     ## ask for survey name
     print("請選擇問卷", end = '')
@@ -47,11 +43,10 @@ def locate_file():
     ## ask for grade
     grade = int(input("請選擇年級: "))
     ## ask for classname
-    print("請選擇班級", end = '')
-    for i in range (len(class_name)) :
-        print('(' + i + ')' + str(class_name[i]), end = '')
-    classname = int(input(": "))
-
+    # print("請選擇班級", end = '')
+    # for i in range (len(class_name)) :
+    #     print('(' + i + ')' + str(class_name[i]), end = '')
+    # classname = int(input(": "))
 
 ## 輸入資料
 def input_data(path):
@@ -118,7 +113,7 @@ def list_record():
         x = int(record.read())
     with open('list_record.txt', 'w') as record:
         record.write(str(x+1))
-    return x
+    return str(x)
 
 ##創建新資料庫
 def add_new_file():
@@ -129,46 +124,36 @@ def add_new_file():
         survey_name.clear()
         for line in file.readlines():
             survey_name.append(line)
-    with open('class_name.txt', 'r', encoding='utf-8') as file:
-        class_name.clear()
-        for line in file.readlines():
-            class_name.append(line)
+    with open('class_name.json', 'r', encoding='utf-8') as file:
+        class_name = json.load(file)
     with open('survey_name.txt', 'w', encoding="utf-8") as file:
         if survey+'\n' not in survey_name: 
             list_data.append([[] for i in range(4)])
             survey_name.append(survey+'\n')
             file.writelines(survey_name)
-    with open('class_name.txt', 'r', encoding='utf-8') as file:
-        for line in file.readlines():
-            class_name.append(line)
-    with open('class_name.txt', 'w', encoding='utf-8') as file:
+    with open('class_name.json', 'w', encoding='utf-8') as file:
         if classname not in class_name:
             list_data[survey][grade].append(list_record())
-            class_name.append(classname+'\n')
-            file.writelines(class_name)
+            class_name[survey+grade+classname] = len(list_data[survey][grade])
+            json.dump(class_name, file)
     grade -= 1
-    w_data(survey_name.index(survey), grade, class_name.index(classname))
+    grade = str(grade)
+    w_data(survey_name.index(survey), grade, class_name[survey+grade+classname])
 
 ## 將學生資訊從資料庫中讀出
-def r_data(): 
-    output_data.clear()
-    open_survey_classname()
-    ## 紀錄不同問卷
-    count = 0
-    for i in range(len(survey_name)) :
-        for j in range(4) :
-            for k in range(len(class_name)) :
-                with open(list_data[i][j][k] + '.txt', 'r', encoding="utf-8") as file:
-                    for line in file.readlines():
-                        s = line.split(' ')
-                        for k in range(len(s)):
-                            if s[k] == '':
-                                del s[k:]
-                                break
-                        s = ' '.join(s)
-                        output_data[count].append(s)
-                        count += 1
-    return count
+def r_id():
+    output_id[0].clear()
+    output_id[1].clear()
+    with open(list_id[0], 'r', encoding="utf-8") as file:
+        for line in file.readlines():
+            s = line.split(' ')
+            s = ' '.join(s)
+            output_id[0].append(s[:-1])
+    with open(list_id[1], 'r', encoding="utf-8") as file:
+        for line in file.readlines():
+            s = line.split(' ')
+            s = ' '.join(s)
+            output_id[1].append(s[:-1])
 
 ## 將學生數據從資料庫中讀出
 def r_data(i): 
