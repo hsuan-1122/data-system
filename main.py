@@ -1,4 +1,3 @@
-## ???
 ## 宣告陣列
 stu_data = []
 line_account = []
