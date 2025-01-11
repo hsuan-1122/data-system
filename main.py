@@ -8,13 +8,28 @@ output_data = [[] for i in range(2)]
 output_id = [[] for i in range(2)]
 # list_data = [[[] for i in range(m)] for i in range(n)]
 # list_data[n][m][l]  
-
 # n=問卷 m=年級 l=班級
+
 
 list_data = ['stu_data1.txt', 'stu_data2.txt']
 list_id = ['stu_account.txt', 'stu_name.txt']
 
-# survey_name =[]
+survey_name =[]
+class_name = []
+
+survey = 0
+grade = 0
+classname = 0
+
+# list_record.txt, survey_name.txt,  class_name.txt, stu_name.txt, stu_account.txt
+
+
+for i in range(list_record()):
+    with open(str(i)+'.txt', 'w') as file:
+
+
+
+
 
 ##取得新資料庫編號
 def list_record():
@@ -23,6 +38,16 @@ def list_record():
     with open('list_record.txt', 'w') as record:
         record.write(str(x+1))
     return x
+
+##創建新資料庫
+def add_new_file():
+    survey = input('問卷名稱: ')
+    grade = input('年級: ')
+    classname = input('班級名稱: ')
+    survey_name.append(survey)
+    class_name.append(classname)
+    with open(list_record+'.txt', 'w') as file:
+        w_data(survey, grade, classname)
 
 ## 輸入資料
 def input_data(path):
@@ -38,7 +63,7 @@ def input_data(path):
             line_name.append(stu_name+'\n')
 
 ## 將資料讀入資料庫
-def w_data(k):
+def w_data(n,m,l):
     blank = []
     output_id[1].clear()
     x = 0
@@ -61,7 +86,7 @@ def w_data(k):
     with open(list_id[1], 'a', encoding="utf-8") as file:
         file.writelines(line_name)
     line_name.clear()
-    with open(list_data[k], 'w', encoding="utf-8") as file:
+    with open(list_data[n][m][l], 'w', encoding="utf-8") as file:
         file.writelines(line_data)
         file.write('\n')
     line_data.clear()
@@ -210,3 +235,11 @@ while(True):
         continue
 
 
+
+
+
+
+print('請選擇問卷', end = '')
+for i in range(len(survey_name)):
+    print('('+str(i+1)+')'+survey[i], end = '')
+print(': ', end = '')
