@@ -14,7 +14,17 @@ survey = 0
 grade = 0
 classname = 0
 
-
+## 開啟survey.txt 和 class_name.txt, 塞到list(survey, classname) 裡面
+def open_survey_classname() :
+    with open('survey_name.txt', 'w', encoding="utf-8") as file:
+        survey_name.clear()
+        for line in file.readlines():
+            survey_name.append(line[:-1]) ## delete '\n'
+    with open('class_name.txt', 'w', encoding="utf-8") as file:
+        class_name.clear()
+        for line in file.readlines():
+            class_name.append(line[:-1]) ## delete '\n'
+            
 ## 定位使用者資料位置(survey_name, grade, classname)
 ## function: 1. find survey name
 ##                  open "survey_name.txt" to check how many surveys we have
@@ -27,14 +37,7 @@ def locate_file():
 ## section 1: ask survey name
 ## create list survey_name by open survey_name.txt
 ## same as class name
-    with open('survey_name.txt', 'w', encoding="utf-8") as file:
-        survey_name.clear()
-        for line in file.readlines():
-            survey_name.append(line[:-1]) ## delete '\n'
-    with open('class_name.txt', 'w', encoding="utf-8") as file:
-        class_name.clear()
-        for line in file.readlines():
-            class_name.append(line[:-1]) ## delete '\n'
+    open_survey_classname()
     ## user
     ## ask for survey name
     print("請選擇問卷", end = '')
@@ -188,17 +191,11 @@ def initialize_data():
         with open(list_data[i], 'w') as file:
             file.write("")
 
-## 將資料整合並輸出
-def output_all_data():
-    for i in range(len(output_id[1])):
-        print(output_id[0][i] + ' ' + output_id[1][i], end = '')
-        if output_data[0] != []:
-            print(' ', end = '')
-            print(output_data[0][i], end = '')
-        if output_data[1] != []:
-            print(' ', end = '')
-            print(output_data[1][i], end = '')
-        print('\n')
+## 輸出一段資料
+def output_data(sheet,index):
+    if output_data[sheet] != []:
+        print(' ', end = '')
+        print(output_data[sheet][index], end = '')
 
 ##主程式
 while(True):
