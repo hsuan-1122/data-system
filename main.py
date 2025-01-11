@@ -6,26 +6,15 @@ line_account = []
 line_name = []
 line_data = []
 raw_data = []
-output_data = [[] for i in range(2)]
+output_data = []
 output_id = [[] for i in range(2)]
 list_data = []
-list_id = ['stu_account.txt', 'stu_name.txt']
+list_id = ['stu_account.json', 'stu_name.json']
 survey_name =[]
 class_name = {}
 survey = 0
 grade = 0
 classname = 0
-
-## 開啟survey.txt 和 class_name.txt, 塞到list(survey, classname) 裡面
-def open_survey_classname() :
-    with open('survey_name.txt', 'w', encoding="utf-8") as file:
-        survey_name.clear()
-        for line in file.readlines():
-            survey_name.append(line[:-1]) ## delete '\n'
-    with open('class_name.txt', 'w', encoding="utf-8") as file:
-        class_name.clear()
-        for line in file.readlines():
-            class_name.append(line[:-1]) ## delete '\n'
 
 ## 定位使用者資料位置(survey_name, grade, classname)
 ## function: 1. find survey name
@@ -39,7 +28,10 @@ def locate_file():
 ## section 1: ask survey name
 ## create list survey_name by open survey_name.txt
 ## same as class name
-    open_survey_classname()
+    with open('survey_name.json', 'r', encoding="utf-8") as file:
+        survey_name = json.load(file)
+    with open('class_name.json', 'r', encoding="utf-8") as file:
+        class_name = json.load(file)
     ## user
     ## ask for survey name
     print("請選擇問卷", end = '')
@@ -49,8 +41,8 @@ def locate_file():
     ## ask for grade
     grade = int(input("請選擇年級: "))
     ## ask for classname
-    # print("請選擇班級", end = '')
-    # for i in range (len(class_name)) :
+    print("請選擇班級", end = '')
+    # for i in range (len(class_name)):
     #     print('(' + i + ')' + str(class_name[i]), end = '')
     # classname = int(input(": "))
 
@@ -62,56 +54,57 @@ def input_data(path):
             stu_account = raw_data[0]
             stu_name = raw_data[1]
             stu_data = raw_data[2:]
+            for i in range(len(stu_data), 0, -1):
+                if stu_data[i] == ' ':
+                    del stu_data[i]
+                stu_data.append(' ')
             string = ' '.join(stu_data)
             line_data.append(string)
-            line_account.append(stu_account+'\n')
-            line_name.append(stu_name+'\n')
+            line_account.append(stu_account)
+            line_name.append(stu_name)
 
 ## 將資料讀入資料庫
 def w_data(n,m,l):
-    blank = []
-    output_id[1].clear()
+    blank = 0
     x = 0
+    with open(list_id[0], 'r', encoding="utf-8") as file:
+        output_id[0] = json.load(file)
     with open(list_id[1], 'r', encoding="utf-8") as file:
-        for line in file.readlines():
-            output_id[1].append(line)
+        output_id[1] = json.load(file)
+        star = '* '
+        for i in range(len(line_data[0])/2 - 1):
+            star = star + '* '
         for i in range(len(output_id[1])):
             if output_id[1][i] not in line_name:
-                line_data.insert(i, '* * * * * * * * * * * *    \n')    #星號數量操作由菌菇處理
+                line_data.insert(i, star)
         for i in range(len(line_name)):
             if line_name[i-x] in output_id[1]:
                 del line_name[i-x]
                 del line_account[i-x]
                 x += 1
             else:
-                blank.append('* * * * * * * * * * * *   \n')            #星號數量操作由蔡蔡處理
-    with open(list_id[0], 'a', encoding="utf-8") as file:
-        file.writelines(line_account)
-    line_account.clear()
-    with open(list_id[1], 'a', encoding="utf-8") as file:
-        file.writelines(line_name)
-    line_name.clear()
-    with open(list_data[n][m][l], 'w', encoding="utf-8") as file:
-        file.writelines(line_data)
-        file.write('\n')
-    line_data.clear()
-    for i in range(2):
-        if i != k:
-            output_data[i].clear()
-            with open(list_data[i], 'r', encoding="utf-8") as file:
-                for line in file.readlines():
-                    s = line.split(' ')
-                    for k in range(len(s)):
-                        if s[k] == '':
-                            del s[k:]
-                            break
-                    s = ' '.join(s)
-                    output_data[i].append(s[:-1])
-                if output_data[i] != []:
-                    with open(list_data[i], 'a', encoding="utf-8") as file:
-                        # file.write('\n')
-                        file.writelines(blank)
-                        blank.clear()
+                blank += 1            #blank代表要加上的行數
+    with open(list_id[0], 'w', encoding="utf-8") as file:
+        output_id[0] = output_id[0] + line_account
+        json.dump(output_id[0], file)
+    with open(list_id[1], 'w', encoding="utf-8") as file:
+        output_id[1] = output_id[1] + line_account
+        json.dump(output_id[1], file)
+    with open(list_data[n][m][l]+'.json', 'w', encoding="utf-8") as file:
+        json.dump(line_data, file)
+    for n in range(len(list_data)):
+        for m in range(len(list_data[n])):
+            for l in range(len(list_data[n][m])):
+                with open(list_data[n][m][l]+'.json', 'r', encoding="utf-8") as file:
+                    output_data = json.load(file)
+                with open(list_data[n][m][l]+'.json', 'w', encoding="utf-8") as file:
+                    star = '* '
+                    for i in range(len(output_data)/2 - 1):
+                        star = star + '* '
+                    for i in range(blank):
+                        output_data = output_data + star
+                with open(list_data[n][m][l]+'.json', 'w', encoding="utf-8") as file:
+                    json.dump(output_data, file)
 
 ##取得新資料庫編號
 def list_record():
@@ -126,25 +119,22 @@ def add_new_file():
     survey = input('問卷名稱: ')
     grade = int(input('年級: '))
     classname = input('班級名稱: ')
-    with open('survey_name.txt', 'r', encoding="utf-8") as file:
-        survey_name.clear()
-        for line in file.readlines():
-            survey_name.append(line)
+    with open('survey_name.json', 'r', encoding="utf-8") as file:
+        survey_name = json.load(file)
     with open('class_name.json', 'r', encoding='utf-8') as file:
         class_name = json.load(file)
-    with open('survey_name.txt', 'w', encoding="utf-8") as file:
-        if survey+'\n' not in survey_name: 
+    with open('survey_name.json', 'w', encoding="utf-8") as file:
+        if survey not in survey_name: 
             list_data.append([[] for i in range(4)])
-            survey_name.append(survey+'\n')
-            file.writelines(survey_name)
+            survey_name.append(survey)
+        json.dump(survey_name, file)
     with open('class_name.json', 'w', encoding='utf-8') as file:
         if classname not in class_name:
             list_data[survey][grade].append(list_record())
             class_name[survey+grade+classname] = len(list_data[survey][grade])
-            json.dump(class_name, file)
+        json.dump(class_name, file)
     grade -= 1
     grade = str(grade)
-    w_data(survey_name.index(survey), grade, class_name[survey+grade+classname])
 
 ## 將學生資訊從資料庫中讀出
 def r_id():
@@ -161,34 +151,21 @@ def r_id():
             s = ' '.join(s)
             output_id[1].append(s[:-1])
 
-## 將所有數據從資料庫中讀出
-def r_data(): 
-    output_data.clear()
-    open_survey_classname()
-    ## 紀錄不同問卷
-    count = 0
-    for i in range(len(survey_name)) :
-        for j in range(4) :
-            for k in range(len(class_name)) :
-                with open(list_data[i][j][k] + '.txt', 'r', encoding="utf-8") as file:
-                    for line in file.readlines():
-                        s = line.split(' ')
-                        for k in range(len(s)):
-                            if s[k] == '':
-                                del s[k:]
-                                break
-                        s = ' '.join(s)
-                        output_data[count].append(s)
-                        count += 1
-    return count
+## 將學生數據從資料庫中讀出
+def r_data(n, m, l): 
+    with open(list_data[n][m][l]+'.json', 'r', encoding="utf-8") as file:
+        output_data = json.load(file)
 
 ## 將資料初始化
 def initialize_data():
     for i in range(2):
-        with open(list_id[i], 'w') as file:
-            file.write("")
-        with open(list_data[i], 'w') as file:
-            file.write("")
+        with open(list_id[i], 'w', encoding='utf-8') as file:
+            json.dump([], file)
+    for n in range(len(list_data)):
+        for m in range(len(list_data[n])):
+            for l in range(len(list_data[n][m])):
+                with open(list_data[n][m][l]+'.json', 'w', encoding="utf-8") as file:
+                    json.dump([], file)
 
 ## 輸出一段資料
 def output_data(sheet,index):
@@ -204,6 +181,9 @@ while(True):
         ## mode 1: create new file
         if mode == 1:
             add_new_file()
+            path = input("請輸入數據之檔名: ")
+            input_data(path)
+            w_data(survey_name.index(survey), grade, class_name[survey+grade+classname])
         ## mode 2: initialize
         elif mode == 2:
             pattern = int(input('(1)初始化全部資料(2)初始化指定資料: '))
@@ -213,16 +193,16 @@ while(True):
             ## initialize specific file
             elif pattern == 2:
                     locate_file()
-                    with open(list_data[survey][grade][classname] + '.txt', 'w') as file:
-                        file.write("")
+                    with open(list_data[survey][grade][classname] + '.json', 'w', encoding='utf-8') as file:
+                        json.dump([], file)
             ## users enter garbage : skip this round
             else: break
         ## mode 3: rewrite data into exist file
         elif mode == 3:
             ## choose which file user want to rewrite
             locate_file()
-            ## 剩下的酷酷酷不知道還沒寫
-            raw_data = input("請選擇欲修改的數據: ")
+            path = input("請輸入數據之檔名: ")
+            input_data(path)
         ## if users enter garbage: skip this round
         else: break
     elif question == 'R':
@@ -256,7 +236,7 @@ while(True):
             for i in range(num) :
                 output_data(i,index)
             print('\n')
-            
+        
         elif pattern == 3 :
             while(True):
                 pattern = int(input("請選擇年級(1)大一(2)大二: "))
