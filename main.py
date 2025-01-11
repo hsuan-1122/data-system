@@ -16,6 +16,17 @@ survey = 0
 grade = 0
 classname = 0
 
+## 開啟survey.txt 和 class_name.txt, 塞到list(survey, classname) 裡面
+def open_survey_classname() :
+    with open('survey_name.txt', 'w', encoding="utf-8") as file:
+        survey_name.clear()
+        for line in file.readlines():
+            survey_name.append(line[:-1]) ## delete '\n'
+    with open('class_name.txt', 'w', encoding="utf-8") as file:
+        class_name.clear()
+        for line in file.readlines():
+            class_name.append(line[:-1]) ## delete '\n'
+
 ## 定位使用者資料位置(survey_name, grade, classname)
 ## function: 1. find survey name
 ##                  open "survey_name.txt" to check how many surveys we have
@@ -28,12 +39,7 @@ def locate_file():
 ## section 1: ask survey name
 ## create list survey_name by open survey_name.txt
 ## same as class name
-    with open('survey_name.txt', 'r', encoding="utf-8") as file:
-        survey_name.clear()
-        for line in file.readlines():
-            survey_name.append(line[:-1]) ## delete '\n'
-    with open('class_name.json', 'r', encoding="utf-8") as file:
-        class_name = json.load(file)
+    open_survey_classname()
     ## user
     ## ask for survey name
     print("請選擇問卷", end = '')
