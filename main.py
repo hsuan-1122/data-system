@@ -6,48 +6,14 @@ line_data = []
 raw_data = []
 output_data = [[] for i in range(2)]
 output_id = [[] for i in range(2)]
-# list_data = [[[] for i in range(m)] for i in range(n)]
-# list_data[n][m][l]  
-# n=問卷 m=年級 l=班級
-
-
-list_data = ['stu_data1.txt', 'stu_data2.txt']
+list_data = []
 list_id = ['stu_account.txt', 'stu_name.txt']
-
 survey_name =[]
 class_name = []
-
 survey = 0
 grade = 0
 classname = 0
 
-# list_record.txt, survey_name.txt,  class_name.txt, stu_name.txt, stu_account.txt
-
-
-for i in range(list_record()):
-    with open(str(i)+'.txt', 'w') as file:
-
-
-
-
-
-##取得新資料庫編號
-def list_record():
-    with open('list_record.txt', 'r') as record:
-        x = int(record.read())
-    with open('list_record.txt', 'w') as record:
-        record.write(str(x+1))
-    return x
-
-##創建新資料庫
-def add_new_file():
-    survey = input('問卷名稱: ')
-    grade = input('年級: ')
-    classname = input('班級名稱: ')
-    survey_name.append(survey)
-    class_name.append(classname)
-    with open(list_record+'.txt', 'w') as file:
-        w_data(survey, grade, classname)
 
 ## 定位使用者資料位置(survey_name, grade, classname)
 ## function: 1. find survey name
@@ -82,12 +48,6 @@ def locate_file():
     for i in range (len(class_name)) :
         print('(' + i + ')' + str(class_name[i]), end = '')
     classname = int(input(": "))
-
-
-
-
-
-
 
 
 ## 輸入資料
@@ -148,6 +108,43 @@ def w_data(n,m,l):
                         # file.write('\n')
                         file.writelines(blank)
                         blank.clear()
+
+##取得新資料庫編號
+def list_record():
+    with open('list_record.txt', 'r') as record:
+        x = int(record.read())
+    with open('list_record.txt', 'w') as record:
+        record.write(str(x+1))
+    return x
+
+##創建新資料庫
+def add_new_file():
+    survey = input('問卷名稱: ')
+    grade = int(input('年級: '))
+    classname = input('班級名稱: ')
+    with open('survey_name.txt', 'r', encoding="utf-8") as file:
+        survey_name.clear()
+        for line in file.readlines():
+            survey_name.append(line)
+    with open('class_name.txt', 'r', encoding='utf-8') as file:
+        class_name.clear()
+        for line in file.readlines():
+            class_name.append(line)
+    with open('survey_name.txt', 'w', encoding="utf-8") as file:
+        if survey+'\n' not in survey_name: 
+            list_data.append([[] for i in range(4)])
+            survey_name.append(survey+'\n')
+            file.writelines(survey_name)
+    with open('class_name.txt', 'r', encoding='utf-8') as file:
+        for line in file.readlines():
+            class_name.append(line)
+    with open('class_name.txt', 'w', encoding='utf-8') as file:
+        if classname not in class_name:
+            list_data[survey][grade].append(list_record())
+            class_name.append(classname+'\n')
+            file.writelines(class_name)
+    grade -= 1
+    w_data(survey_name.index(survey), grade, class_name.index(classname))
 
 ## 將學生資訊從資料庫中讀出
 def r_id():
@@ -272,4 +269,3 @@ while(True):
                 else: break
     else:
         continue
-
