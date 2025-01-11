@@ -156,17 +156,25 @@ def r_id():
             output_id[1].append(s[:-1])
 
 ## 將學生數據從資料庫中讀出
-def r_data(i): 
-    output_data[i].clear()
-    with open(list_data[i], 'r', encoding="utf-8") as file:
-        for line in file.readlines():
-            s = line.split(' ')
-            for k in range(len(s)):
-                if s[k] == '':
-                    del s[k:]
-                    break
-            s = ' '.join(s)
-            output_data[i].append(s)
+def r_data(): 
+    output_data.clear()
+    open_survey_classname()
+    ## 紀錄不同問卷
+    count = 0
+    for i in range(len(survey_name)) :
+        for j in range(4) :
+            for k in range(len(class_name)) :
+                with open(list_data[i][j][k] + '.txt', 'r', encoding="utf-8") as file:
+                    for line in file.readlines():
+                        s = line.split(' ')
+                        for k in range(len(s)):
+                            if s[k] == '':
+                                del s[k:]
+                                break
+                        s = ' '.join(s)
+                        output_data[count].append(s)
+                        count += 1
+    return count
 
 ## 將資料初始化
 def initialize_data():
