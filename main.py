@@ -1,4 +1,5 @@
 import json
+import os
 
 ## 宣告陣列
 stu_data = []
@@ -62,6 +63,7 @@ def input_data(path):
                     del stu_data[i:]
                     break
             string = ' '.join(stu_data)
+            string = string + ' '
             line_data.append(string)
             line_account.append(stu_account)
             line_name.append(stu_name)
@@ -77,7 +79,7 @@ def w_data(n,m,l):
     with open(list_id[1], 'r', encoding="utf-8") as file:
         output_id[1] = json.load(file)
     star = '* '
-    for i in range(int(len(line_data[0])/2) - 1):
+    for i in range(int(len(line_data[0])/2)-1):
         star = star + '* '
     for i in range(len(output_id[1])):
         if output_id[1][i] not in line_name:
@@ -93,20 +95,23 @@ def w_data(n,m,l):
     with open(list_id[0], 'w', encoding="utf-8") as file:
         output_id[0] = output_id[0] + line_account
         json.dump(output_id[0], file)
+        line_account.clear()
     with open(list_id[1], 'w', encoding="utf-8") as file:
         output_id[1] = output_id[1] + line_name
         json.dump(output_id[1], file)
+        line_name.clear()
     with open(list_data[n][m][l]+'.json', 'w', encoding="utf-8") as file:
         json.dump(line_data, file)
+        line_data.clear()
     for a in range(len(list_data)):
         for b in range(len(list_data[a])):
             for c in range(len(list_data[a][b])):
-                if a != n and b != m and c != l:
+                if a != n or b != m or c != l:
                     with open(list_data[a][b][c]+'.json', 'r', encoding="utf-8") as file:
                         output_data = json.load(file)
                     with open(list_data[a][b][c]+'.json', 'w', encoding="utf-8") as file:
                         star = '* '
-                        for i in range(int(len(output_data)/2) - 1):
+                        for i in range(int(len(output_data[0])/2)-1):
                             star = star + '* '
                         for i in range(blank):
                             output_data.append(star)
@@ -167,18 +172,21 @@ def initialize_data():
     for n in range(len(list_data)):
         for m in range(len(list_data[n])):
             for l in range(len(list_data[n][m])):
-                with open(list_data[n][m][l]+'.json', 'w', encoding="utf-8") as file:
-                    json.dump([], file)
+                os.remove(list_data[n][m][l]+'.json')
+    with open('class_name.json', 'w', encoding='utf-8') as file:
+        json.dump({}, file)
+    with open('survey_name.json', 'w', encoding='utf-8') as file:
+        json.dump([], file)
     with open('list_data.json', 'w', encoding='utf-8') as file:
-        json.dump(list_data, file)
+        json.dump([], file)
 
 ## 輸出一段資料
-def output_data(n, m, l, i):
+def output_data_f(n, m, l, i):
     with open('list_data.json', 'r', encoding='utf-8') as file:
         list_data = json.load(file)
     with open(list_data[n][m][l]+'.json', 'r', encoding="utf-8") as file:
         output_data = json.load(file)
-    print(output_data[i], end = ' ')
+    print(output_data[i], end = '')
     with open('list_data.json', 'w', encoding='utf-8') as file:
         json.dump(list_data, file)
 
@@ -227,7 +235,7 @@ def main():
         elif question == 'R':
             r_id()
             ## 讓使用者決定欲使用之部分
-            pattern = int(input("請選擇輸出資料模式(1)輸出所有資料(2)以人名輸出資料(3)輸出指定資料 "))
+            pattern = int(input("請選擇輸出資料模式(1)輸出所有資料(2)以人名輸出資料(3)輸出指定資料: "))
             ## 印出所有資料
             if pattern == 1:
                 print("所有資料:\n")
@@ -236,7 +244,7 @@ def main():
                     for n in range(len(list_data)):
                         for m in range(len(list_data[n])):
                             for l in range(len(list_data[n][m])):
-                                output_data(n, m, l, i)
+                                output_data_f(n, m, l, i)
                     print('\n')
             ## 以人名輸出資料
             elif pattern == 2:
@@ -249,7 +257,7 @@ def main():
                 for n in range(len(list_data)):
                     for m in range(len(list_data[n])):
                         for l in range(len(list_data[n][m])):
-                            output_data(n, m, l, index)
+                            output_data_f(n, m, l, index)
                 print('\n')
             ##輸出指定資料
             elif pattern == 3 :
