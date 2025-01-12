@@ -151,7 +151,7 @@ def add_new_file():
         json.dump(list_data, file)
 
 ## 將學生資訊從資料庫中讀出
-def r_id(i):
+def r_id():
     with open(list_id[0], 'r', encoding="utf-8") as file:
         output_id[0] = json.load(file)
     with open(list_id[1], 'r', encoding="utf-8") as file:
