@@ -12,7 +12,8 @@ output_id = [[] for i in range(2)]
 list_data = []
 list_id = ['stu_account.json', 'stu_name.json']
 survey_name =[]
-class_name = {}
+class_name = []
+class_name_dict = {}
 global survey
 global grade
 global classname
@@ -34,21 +35,27 @@ def locate_file():
 ## same as class name
     with open('survey_name.json', 'r', encoding="utf-8") as file:
         survey_name = json.load(file)
-    with open('class_name.json', 'r', encoding="utf-8") as file:
+    with open('class_name.json', 'r', encoding='utf-8') as file:
         class_name = json.load(file)
+    with open('class_name_dict.json', 'r', encoding='utf-8') as file:
+        class_name_dict = json.load(file)
     ## user
     ## ask for survey name
     print("請選擇問卷", end = '')
     for i in range (len(survey_name)) :
         print('(' + str(i + 1) + ')' + str(survey_name[i]), end = '')
-    survey = int(input(": "))
+    survey = survey_name[int(input(": "))-1]
     ## ask for grade
     grade = int(input("請選擇年級: "))
+    grade -= 1
     ## ask for classname
-    print("請選擇班級", end = '')
-    # for i in range (len(class_name)):
-    #     print('(' + i + ')' + str(class_name[i]), end = '')
-    # classname = int(input(": "))
+    x = 0
+    for i in range (len(class_name)) :
+        if survey+str(grade)+class_name[i] in class_name_dict:
+            print('(' + str(i + 1 - x) + ')' + str(class_name[i - x]), end = '')
+        else:
+            x += 1
+    classname = class_name[int(input(": "))-1+x]
 
 ## 輸入資料
 def input_data(path):
@@ -140,18 +147,18 @@ def add_new_file():
         list_data = json.load(file)
     with open('survey_name.json', 'r', encoding="utf-8") as file:
         survey_name = json.load(file)
-    with open('class_name.json', 'r', encoding='utf-8') as file:
-        class_name = json.load(file)
+    with open('class_name_dict.json', 'r', encoding='utf-8') as file:
+        class_name_dict = json.load(file)
     with open('survey_name.json', 'w', encoding="utf-8") as file:
         if survey not in survey_name: 
             list_data.append([[] for i in range(4)])
             survey_name.append(survey)
         json.dump(survey_name, file)
-    with open('class_name.json', 'w', encoding='utf-8') as file:
-        if classname not in class_name:
+    with open('class_name_dict.json', 'w', encoding='utf-8') as file:
+        if classname not in class_name_dict:
             list_data[survey_name.index(survey)][grade].append(list_record())
-            class_name[survey+str(grade)+classname] = len(list_data[survey_name.index(survey)][grade])-1
-        json.dump(class_name, file)
+            class_name_dict[survey+str(grade)+classname] = len(list_data[survey_name.index(survey)][grade])-1
+        json.dump(class_name_dict, file)
     with open('list_data.json', 'w', encoding='utf-8') as file:
         json.dump(list_data, file)
 
@@ -173,9 +180,11 @@ def initialize_data():
         for m in range(len(list_data[n])):
             for l in range(len(list_data[n][m])):
                 os.remove(list_data[n][m][l]+'.json')
-    with open('class_name.json', 'w', encoding='utf-8') as file:
+    with open('class_name_dict.json', 'w', encoding='utf-8') as file:
         json.dump({}, file)
     with open('survey_name.json', 'w', encoding='utf-8') as file:
+        json.dump([], file)
+    with open('class_name.json', 'w', encoding='utf-8') as file:
         json.dump([], file)
     with open('list_data.json', 'w', encoding='utf-8') as file:
         json.dump([], file)
@@ -208,9 +217,9 @@ def main():
                 input_data(path)
                 with open('survey_name.json', 'r', encoding='utf-8') as file:
                     survey_name = json.load(file)
-                with open('class_name.json', 'r', encoding='utf-8') as file:
-                    class_name = json.load(file)
-                w_data(survey_name.index(survey), grade, class_name[survey+str(grade)+classname])
+                with open('class_name_dict.json', 'r', encoding='utf-8') as file:
+                    class_name_dict = json.load(file)
+                w_data(survey_name.index(survey), grade, class_name_dict[survey+str(grade)+classname])
             ## mode 2: initialize
             elif mode == 2:
                 pattern = int(input('(1)初始化全部資料(2)初始化指定資料: '))
@@ -220,7 +229,7 @@ def main():
                 ## initialize specific file
                 elif pattern == 2:
                     locate_file()
-                    with open(list_data[survey_name.index(survey)][grade][class_name[survey+str(grade)+classname]] + '.json', 'w', encoding='utf-8') as file:
+                    with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]] + '.json', 'w', encoding='utf-8') as file:
                         json.dump([], file)
                 ## users enter garbage : skip this round
                 else: break
@@ -261,12 +270,16 @@ def main():
                 print('\n')
             ##輸出指定資料
             elif pattern == 3 :
-                locate_file()           
-                with open(list_data[survey_name.index(survey)][grade][class_name[survey+str(grade)+classname]]+'.json', 'r', encoding="utf-8") as file:
+                locate_file()
+                with open('survey_name.json', 'r', encoding="utf-8") as file:
+                    survey_name = json.load(file)
+                with open('class_name_dict.json', 'r', encoding='utf-8') as file:
+                    class_name_dict = json.load(file)           
+                with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding="utf-8") as file:
                     output_data = json.load(file)
                     for i in range(len(output_data[0])):
                         if output_data[i][0] != '*':
-                            print(output_id[0] + ' ' + output_id[1] + ' ' + output_data[i])
+                            print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
         else:
             continue
 
