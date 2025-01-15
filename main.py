@@ -147,6 +147,8 @@ def add_new_file():
         list_data = json.load(file)
     with open('survey_name.json', 'r', encoding="utf-8") as file:
         survey_name = json.load(file)
+    with open('class_name.json', 'r', encoding='utf-8') as file:
+        class_name = json.load(file)
     with open('class_name_dict.json', 'r', encoding='utf-8') as file:
         class_name_dict = json.load(file)
     with open('survey_name.json', 'w', encoding="utf-8") as file:
@@ -154,6 +156,10 @@ def add_new_file():
             list_data.append([[] for i in range(4)])
             survey_name.append(survey)
         json.dump(survey_name, file)
+    with open('class_name.json', 'w', encoding="utf-8") as file:
+        if classname not in class_name: 
+            class_name.append(classname)
+        json.dump(class_name, file)
     with open('class_name_dict.json', 'w', encoding='utf-8') as file:
         if classname not in class_name_dict:
             list_data[survey_name.index(survey)][grade].append(list_record())
@@ -229,6 +235,10 @@ def main():
                 ## initialize specific file
                 elif pattern == 2:
                     locate_file()
+                    with open('survey_name.json', 'r', encoding='utf-8') as file:
+                        survey_name = json.load(file)
+                    with open('class_name_dict.json', 'r', encoding='utf-8') as file:
+                        class_name_dict = json.load(file)
                     with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]] + '.json', 'w', encoding='utf-8') as file:
                         json.dump([], file)
                 ## users enter garbage : skip this round
@@ -244,7 +254,7 @@ def main():
         elif question == 'R':
             r_id()
             ## 讓使用者決定欲使用之部分
-            pattern = int(input("請選擇輸出資料模式 (1)輸出所有資料 (2)以人名輸出資料 (3)輸出指定資料 (4)輸出指定資料中的共同受測者: "))
+            pattern = int(input("請選擇輸出資料模式(1)輸出所有資料(2)以人名輸出資料(3)輸出指定資料: "))
             ## 印出所有資料
             if pattern == 1:
                 print("所有資料:\n")
@@ -254,7 +264,7 @@ def main():
                         for m in range(len(list_data[n])):
                             for l in range(len(list_data[n][m])):
                                 output_data_f(n, m, l, i)
-                    print('\n')
+                    print('\n', end = '')
             ## 以人名輸出資料
             elif pattern == 2:
                 ## user enter data's name they want
@@ -280,28 +290,6 @@ def main():
                     for i in range(len(output_data[0])):
                         if output_data[i][0] != '*':
                             print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
-            ##輸出多個指定資料中的共同受測者名單
-            elif pattern == 4:
-                multioutput_data = []
-                while(True):
-                    locate_file()
-                    with open('survey_name.json', 'r', encoding="utf-8") as file:
-                        survey_name = json.load(file)
-                    with open('class_name_dict.json', 'r', encoding='utf-8') as file:
-                        class_name_dict = json.load(file)           
-                    with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding='utf-8') as file:
-                        output_data = json.load(file)
-                        multioutput_data.append([output_data])
-                    repeat = input("是否要再輸出其他數據 (1)是 (2)否: ")
-                    if repeat == '2': break
-                for i in range(len(multioutput_data[0])):
-                    to_print = True
-                    for j in range(len(multioutput_data)):
-                        if multioutput_data[j][i] == '*': to_print = False
-                    if to_print:
-                        print(output_id[0][i] + ' ' + output_id[1][i] + ' ')
-                        for k in range(len(multioutput_data)):
-                            print(multioutput_data[k][i], end=' ')
         else:
             continue
 
