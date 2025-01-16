@@ -287,7 +287,7 @@ def main():
                     class_name_dict = json.load(file)           
                 with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding="utf-8") as file:
                     output_data = json.load(file)
-                    for i in range(len(output_data[0])):
+                    for i in range(len(output_data)):
                         if output_data[i][0] != '*':
                             print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
             ##輸出多個指定資料中的共同受測者名單
