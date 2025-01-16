@@ -215,48 +215,49 @@ def main():
             list_data = json.load(file)
         question = input('模式選擇(W/R): ').upper()
         if question == 'W':
-            mode = int(input("請選擇輸入模式 (1)輸入新資料 (2)初始化 (3)修改已建檔之資料: "))
+            mode = input("請選擇輸入模式 (1)輸入新資料 (2)初始化 (3)修改已建檔之資料: ")
             ## mode 1: create new file
-            if mode == 1:
-                add_new_file()
-                path = input("請輸入數據之檔名: ")
-                input_data(path)
-                with open('survey_name.json', 'r', encoding='utf-8') as file:
-                    survey_name = json.load(file)
-                with open('class_name_dict.json', 'r', encoding='utf-8') as file:
-                    class_name_dict = json.load(file)
-                w_data(survey_name.index(survey), grade, class_name_dict[survey+str(grade)+classname])
-            ## mode 2: initialize
-            elif mode == 2:
-                pattern = int(input('(1)初始化全部資料(2)初始化指定資料: '))
-                ## initialize all file
-                if pattern == 1:
-                    initialize_data()
-                ## initialize specific file
-                elif pattern == 2:
-                    locate_file()
+            while(True):
+                if mode == '1':
+                    add_new_file()
+                    path = input("請輸入數據之檔名: ")
+                    input_data(path)
                     with open('survey_name.json', 'r', encoding='utf-8') as file:
                         survey_name = json.load(file)
                     with open('class_name_dict.json', 'r', encoding='utf-8') as file:
                         class_name_dict = json.load(file)
-                    with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]] + '.json', 'w', encoding='utf-8') as file:
-                        json.dump([], file)
-                ## users enter garbage : skip this round
+                    w_data(survey_name.index(survey), grade, class_name_dict[survey+str(grade)+classname])
+                ## mode 2: initialize
+                elif mode == '2':
+                    pattern = int(input('(1)初始化全部資料(2)初始化指定資料: '))
+                    ## initialize all file
+                    if pattern == 1:
+                        initialize_data()
+                    ## initialize specific file
+                    elif pattern == 2:
+                        locate_file()
+                        with open('survey_name.json', 'r', encoding='utf-8') as file:
+                            survey_name = json.load(file)
+                        with open('class_name_dict.json', 'r', encoding='utf-8') as file:
+                            class_name_dict = json.load(file)
+                        with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]] + '.json', 'w', encoding='utf-8') as file:
+                            json.dump([], file)
+                    ## users enter garbage : skip this round
+                    else: break
+                ## mode 3: rewrite data into exist file
+                elif mode == '3':
+                    ## choose which file user want to rewrite
+                    locate_file()
+                    path = input("請輸入數據之檔名: ")
+                    input_data(path)
+                ## if users enter garbage: skip to the previous question
                 else: break
-            ## mode 3: rewrite data into exist file
-            elif mode == 3:
-                ## choose which file user want to rewrite
-                locate_file()
-                path = input("請輸入數據之檔名: ")
-                input_data(path)
-            ## if users enter garbage: skip this round
-            else: break
         elif question == 'R':
             r_id()
             ## 讓使用者決定欲使用之部分
-            pattern = int(input("請選擇輸出資料模式 (1)輸出所有資料 (2)以人名輸出資料 (3)輸出指定資料 (4)輸出指定資料中的共同受測者: "))
+            pattern = input("請選擇輸出資料模式 (1)輸出所有資料 (2)以人名輸出資料 (3)輸出指定資料 (4)輸出多份指定資料 (5)輸出多指定資料中的共同受測者名單: ")
             ## 印出所有資料
-            if pattern == 1:
+            if pattern == '1':
                 print("所有資料:\n")
                 for i in range(len(output_id[1])):
                     print(output_id[0][i] + ' ' + output_id[1][i], end = ' ')
@@ -266,7 +267,7 @@ def main():
                                 output_data_f(n, m, l, i)
                     print('\n', end = '')
             ## 以人名輸出資料
-            elif pattern == 2:
+            elif pattern == '2':
                 ## user enter data's name they want
                 name = str(input("請輸入欲搜尋之人名: "))
                 ## find which index is the name    
@@ -279,7 +280,7 @@ def main():
                             output_data_f(n, m, l, index)
                 print('\n')
             ##輸出指定資料
-            elif pattern == 3 :
+            elif pattern == '3':
                 locate_file()
                 with open('survey_name.json', 'r', encoding="utf-8") as file:
                     survey_name = json.load(file)
@@ -290,8 +291,12 @@ def main():
                     for i in range(len(output_data)):
                         if output_data[i][0] != '*':
                             print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
-            ##輸出多個指定資料中的共同受測者名單
-            elif pattern == 4:
+            ##輸出多份指定資料
+            elif pattern == '4':
+
+                
+            ##輸出多份指定資料的共同受試者名單
+            elif pattern == '5':
                 multioutput_data = []
                 while(True):
                     locate_file()
@@ -301,17 +306,15 @@ def main():
                         class_name_dict = json.load(file)           
                     with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding='utf-8') as file:
                         output_data = json.load(file)
-                        multioutput_data.append([output_data])
+                        multioutput_data.append(output_data)
                     repeat = input("是否要再輸出其他數據 (1)是 (2)否: ")
                     if repeat == '2': break
                 for i in range(len(multioutput_data[0])):
                     to_print = True
                     for j in range(len(multioutput_data)):
-                        if multioutput_data[j][i] == '*': to_print = False
+                        if multioutput_data[j][i][0] == '*': to_print = False
                     if to_print:
-                        print(output_id[0][i] + ' ' + output_id[1][i] + ' ')
-                        for k in range(len(multioutput_data)):
-                            print(multioutput_data[k][i], end=' ')
+                        print(output_id[0][i] + ' ' + output_id[1][i], end = '\n')
         else:
             continue
 
