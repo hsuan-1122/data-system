@@ -311,8 +311,8 @@ def main():
                             print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
                             final_output += output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i] + '\n'
             ##輸出多份指定資料
-            # elif pattern == '4':
-            multioutput_data = []
+            elif pattern == '4' :
+                multioutput_data = []
                 while (True) :
                     locate_file()
                     ## read in specific data
@@ -323,13 +323,16 @@ def main():
                     with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding="utf-8") as file:
                         output_data = json.load(file)
                         multioutput_data.append(output_data)
-                    ## check if the student has data in here
-                    for i in range(len(multioutput_data)): ## to check all student
-                        for j in range(len(multioutput_data)):  ## to run all choosed survey
-                            if multioutput_data[i][j][0] != '*' : ## need to print
-                                print(output_id[0][i] + ' ' + output_id[1][i], end = '\n') ## print out student
-                                print(output_data[i])
-                                break
+                    ## ask if user want to enter more data
+                    repeat = input("是否要再輸出其他數據 (1)是 (2)否: ")
+                    if repeat == 2 : break
+                ## check if the student has data in here
+                for i in range(len(multioutput_data)): ## to check all student
+                    for j in range(len(multioutput_data)):  ## to run all choosed survey
+                        if multioutput_data[i][j][0] != '*' : ## need to print
+                            print(output_id[0][i] + ' ' + output_id[1][i], end = ' ') ## print out student
+                            print(output_data[i])
+                            break
 
                 
             ##輸出多份指定資料的共同受試者名單
