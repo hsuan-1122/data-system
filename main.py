@@ -324,11 +324,11 @@ def main():
                         output_data = json.load(file)
                         multioutput_data.append(output_data)
                     ## ask if user want to enter more data
-                    repeat = input("是否要再輸出其他數據 (1)是 (2)否: ")
+                    repeat = int(input("是否要再輸出其他數據 (1)是 (2)否: "))
                     if repeat == 2 : break
                 ## check if the student has data in here
                 for i in range(len(multioutput_data)): ## to check all student
-                    for j in range(len(multioutput_data)):  ## to run all choosed survey
+                    for j in range(len(multioutput_data[i])):  ## to run all choosed survey
                         if multioutput_data[i][j][0] != '*' : ## need to print
                             print(output_id[0][i] + ' ' + output_id[1][i], end = ' ') ## print out student
                             print(output_data[i])
