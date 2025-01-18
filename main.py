@@ -17,6 +17,7 @@ class_name_dict = {}
 global survey
 global grade
 global classname
+global final_output
 
 ## 定位使用者資料位置(survey_name, grade, classname)
 ## function: 1. find survey name
@@ -197,11 +198,13 @@ def initialize_data():
 
 ## 輸出一段資料
 def output_data_f(n, m, l, i):
+    global final_output
     with open('list_data.json', 'r', encoding='utf-8') as file:
         list_data = json.load(file)
     with open(list_data[n][m][l]+'.json', 'r', encoding="utf-8") as file:
         output_data = json.load(file)
     print(output_data[i], end = '')
+    final_output += output_data[i]
     with open('list_data.json', 'w', encoding='utf-8') as file:
         json.dump(list_data, file)
 
@@ -211,6 +214,8 @@ def main():
         global survey
         global grade
         global classname
+        global final_output
+        final_output = ''
         with open('list_data.json', 'r', encoding='utf-8') as file:
             list_data = json.load(file)
         question = input('模式選擇(W/R): ').upper()
@@ -265,11 +270,13 @@ def main():
                 print("所有資料:\n")
                 for i in range(len(output_id[1])):
                     print(output_id[0][i] + ' ' + output_id[1][i], end = ' ')
+                    final_output += output_id[0][i] + ' ' + output_id[1][i] + ' '
                     for n in range(len(list_data)):
                         for m in range(len(list_data[n])):
                             for l in range(len(list_data[n][m])):
                                 output_data_f(n, m, l, i)
                     print('\n', end = '')
+                    final_output += '\n'
             ## 以人名輸出資料
             elif pattern == '2':
                 ## user enter data's name they want
@@ -278,11 +285,13 @@ def main():
                 index = output_id[1].index(name)
                 ## print out student's id (account and name)
                 print(output_id[0][index] + ' ' + output_id[1][index], end = ' ')
+                final_output += output_id[0][i] + ' ' + output_id[1][i] + ' '
                 for n in range(len(list_data)):
                     for m in range(len(list_data[n])):
                         for l in range(len(list_data[n][m])):
                             output_data_f(n, m, l, index)
-                print('\n')
+                print('\n', end = '')
+                final_output += '\n'
             ##輸出指定資料
             elif pattern == '3':
                 locate_file()
@@ -295,6 +304,7 @@ def main():
                     for i in range(len(output_data)):
                         if output_data[i][0] != '*':
                             print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
+                            final_output += output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i] + '\n'
             ##輸出多份指定資料
             # elif pattern == '4':
 
@@ -319,8 +329,11 @@ def main():
                         if multioutput_data[j][i][0] == '*': to_print = False
                     if to_print:
                         print(output_id[0][i] + ' ' + output_id[1][i], end = '\n')
+                        final_output += output_id[0][i] + ' ' + output_id[1][i] + '\n'
         else:
             continue
+        with open('output.txt', 'w', encoding='utf-8') as file:
+            file.write(final_output)
 
 if __name__ == '__main__':
     main()
