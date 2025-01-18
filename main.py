@@ -227,12 +227,14 @@ def main():
                     with open('class_name_dict.json', 'r', encoding='utf-8') as file:
                         class_name_dict = json.load(file)
                     w_data(survey_name.index(survey), grade, class_name_dict[survey+str(grade)+classname])
+                    break
                 ## mode 2: initialize
                 elif mode == '2':
                     pattern = int(input('(1)初始化全部資料(2)初始化指定資料: '))
                     ## initialize all file
                     if pattern == 1:
                         initialize_data()
+                        break
                     ## initialize specific file
                     elif pattern == 2:
                         locate_file()
@@ -242,6 +244,7 @@ def main():
                             class_name_dict = json.load(file)
                         with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]] + '.json', 'w', encoding='utf-8') as file:
                             json.dump([], file)
+                        break
                     ## users enter garbage : skip this round
                     else: break
                 ## mode 3: rewrite data into exist file
@@ -250,6 +253,7 @@ def main():
                     locate_file()
                     path = input("請輸入數據之檔名: ")
                     input_data(path)
+                    break
                 ## if users enter garbage: skip to the previous question
                 else: break
         elif question == 'R':
@@ -292,7 +296,7 @@ def main():
                         if output_data[i][0] != '*':
                             print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
             ##輸出多份指定資料
-            elif pattern == '4':
+            # elif pattern == '4':
 
                 
             ##輸出多份指定資料的共同受試者名單
