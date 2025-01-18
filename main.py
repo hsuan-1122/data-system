@@ -256,8 +256,13 @@ def main():
                 elif mode == '3':
                     ## choose which file user want to rewrite
                     locate_file()
+                    with open('survey_name.json', 'r', encoding="utf-8") as file:
+                        survey_name = json.load(file)
+                    with open('class_name_dict.json', 'r', encoding='utf-8') as file:
+                        class_name_dict = json.load(file)
                     path = input("請輸入數據之檔名: ")
                     input_data(path)
+                    w_data(survey_name.index(survey), grade, class_name_dict[survey+str(grade)+classname])
                     break
                 ## if users enter garbage: skip to the previous question
                 else: break
