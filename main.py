@@ -329,7 +329,7 @@ def main():
                 ## check if the student has data in here
                 for i in range(len(multioutput_data[0])): ## to check all student
                     for j in range(len(multioutput_data)):  ## to run all choosed survey
-                        if multioutput_data[i][j][0] != '*' : ## need to print
+                        if multioutput_data[j][i][0] != '*' : ## need to print
                             print(output_id[0][i] + ' ' + output_id[1][i], end = ' ') ## print out student
                             print(output_data[i])
                             break
