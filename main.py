@@ -331,8 +331,8 @@ def main():
                     for j in range(len(multioutput_data)):  ## to run all choosed survey
                         if multioutput_data[j][i][0] != '*' : ## need to print
                             print(output_id[0][i] + ' ' + output_id[1][i], end = ' ') ## print out student
-                            print(output_data[i])
-                            break
+                            print(multioutput_data[j][i])
+                        break;
 
                 
             ##輸出多份指定資料的共同受試者名單
