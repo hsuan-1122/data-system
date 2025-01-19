@@ -53,7 +53,7 @@ def locate_file():
     x = 0
     for i in range (len(class_name)) :
         if survey+str(grade)+class_name[i] in class_name_dict:
-            print('(' + str(i + 1 - x) + ')' + str(class_name[i - x]), end = '')
+            print('請輸入班級(' + str(i + 1 - x) + ')' + str(class_name[i - x]), end = '')
         else:
             x += 1
     classname = class_name[int(input(": "))-1+x]
@@ -303,7 +303,7 @@ def main():
                 with open('survey_name.json', 'r', encoding="utf-8") as file:
                     survey_name = json.load(file)
                 with open('class_name_dict.json', 'r', encoding='utf-8') as file:
-                    class_name_dict = json.load(file)           
+                    class_name_dict = json.load(file)
                 with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding="utf-8") as file:
                     output_data = json.load(file)
                     for i in range(len(output_data)):
@@ -331,11 +331,11 @@ def main():
                     for j in range(len(multioutput_data)):  ## to run all choosed survey
                         if multioutput_data[j][i][0] != '*' : ## need to print
                             print(output_id[0][i] + ' ' + output_id[1][i], end = ' ') ## print out student
-                            for j in range(len(multioutput_data))
-                                print(multioutput_data[j][i])
-                        break;
-
-                
+                            for j in range(len(multioutput_data)):
+                                print(multioutput_data[j][i], end = '')
+                            print('\n', end = '')
+                        break
+                    
             ##輸出多份指定資料的共同受試者名單
             elif pattern == '5':
                 multioutput_data = []
@@ -344,7 +344,7 @@ def main():
                     with open('survey_name.json', 'r', encoding="utf-8") as file:
                         survey_name = json.load(file)
                     with open('class_name_dict.json', 'r', encoding='utf-8') as file:
-                        class_name_dict = json.load(file)           
+                        class_name_dict = json.load(file)
                     with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding='utf-8') as file:
                         output_data = json.load(file)
                         multioutput_data.append(output_data)
