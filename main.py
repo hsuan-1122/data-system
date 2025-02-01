@@ -40,23 +40,31 @@ def locate_file():
         class_name = json.load(file)
     with open('class_name_dict.json', 'r', encoding='utf-8') as file:
         class_name_dict = json.load(file)
+    with open('list_data.json', 'r', encoding='utf-8') as file:
+        list_data = json.load(file)
     ## user
     ## ask for survey name
     print("請選擇問卷", end = '')
     for i in range (len(survey_name)) :
-        print('(' + str(i + 1) + ')' + str(survey_name[i]), end = '')
+        print(' (' + str(i + 1) + ')' + str(survey_name[i]), end = '')
     survey = survey_name[int(input(": "))-1]
     ## ask for grade
-    grade = int(input("請選擇年級: "))
-    grade -= 1
+    print("請選擇年級，目前有", end = '')
+    for i in range(len(list_data[survey_name.index(survey)])):
+        if list_data[survey_name.index(survey)][i] != []:
+            print(' ' + str(i + 1) + "年級", end = '')
+    grade = int(input(": ")) - 1
     ## ask for classname
     x = 0
-    for i in range (len(class_name)) :
+    choice = []
+    print("請選擇班級", end = '')
+    for i in range (len(class_name)):
         if survey+str(grade)+class_name[i] in class_name_dict:
-            print('請輸入班級(' + str(i + 1 - x) + ')' + str(class_name[i - x]), end = '')
+            print(' (' + str(i + 1 - x) + ')' + str(class_name[i]), end = '')
+            choice.append(i)
         else:
             x += 1
-    classname = class_name[int(input(": "))-1+x]
+    classname = class_name[choice[int(input(": "))-1]]
 
 ## 輸入資料
 def input_data(path):
@@ -269,7 +277,7 @@ def main():
         elif question == 'R':
             r_id()
             ## 讓使用者決定欲使用之部分
-            pattern = input("請選擇輸出資料模式 (1)輸出所有資料 (2)以人名輸出資料 (3)輸出指定資料 (4)輸出多份指定資料 (5)輸出多指定資料中的共同受測者名單 (6)輸出目前有哪些問卷: ")
+            pattern = input("請選擇輸出資料模式 (1)輸出所有資料 (2)以人名輸出資料 (3)輸出指定資料 (4)輸出多指定資料中的共同受測者 (5)輸出目前有哪些問卷: ")
             ## 印出所有資料
             if pattern == '1':
                 print("所有資料:\n")
@@ -297,21 +305,8 @@ def main():
                             output_data_f(n, m, l, index)
                 print('\n', end = '')
                 final_output += '\n'
-            ##輸出指定資料
-            elif pattern == '3':
-                locate_file()
-                with open('survey_name.json', 'r', encoding="utf-8") as file:
-                    survey_name = json.load(file)
-                with open('class_name_dict.json', 'r', encoding='utf-8') as file:
-                    class_name_dict = json.load(file)
-                with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json', 'r', encoding="utf-8") as file:
-                    output_data = json.load(file)
-                    for i in range(len(output_data)):
-                        if output_data[i][0] != '*':
-                            print(output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i])
-                            final_output += output_id[0][i] + ' ' + output_id[1][i] + ' ' + output_data[i] + '\n'
-            ##輸出多份指定資料
-            elif pattern == '4' :
+            ## 輸出多份指定資料
+            elif pattern == '3' :
                 multioutput_data = []
                 while (True) :
                     locate_file()
@@ -328,15 +323,19 @@ def main():
                     if repeat == 2 : break
                 ## check if the student has data in here
                 for i in range(len(multioutput_data[0])): ## to check all student
+                    to_print = False
                     for j in range(len(multioutput_data)):  ## to run all choosed survey
-                        if multioutput_data[j][i][0] != '*' : ## need to print
-                            print(output_id[0][i] + ' ' + output_id[1][i], end = ' ') ## print out student
-                            for j in range(len(multioutput_data)):
-                                print(multioutput_data[j][i], end = '')
-                            print('\n', end = '')
-                        break
-            ##輸出多份指定資料的共同受試者名單
-            elif pattern == '5':
+                        if multioutput_data[j][i][0] != '*' : to_print = True     ## need to print
+                    if to_print:
+                        print(output_id[0][i] + ' ' + output_id[1][i], end = ' ') ## print out student
+                        final_output += output_id[0][i] + ' ' + output_id[1][i] + ' '
+                        for j in range(len(multioutput_data)):
+                            print(multioutput_data[j][i], end = '')
+                            final_output += multioutput_data[j][i]
+                        print('\n', end = '')
+                        final_output += '\n'
+            ##輸出多份指定資料的共同受試者
+            elif pattern == '4':
                 multioutput_data = []
                 while(True):
                     locate_file()
@@ -354,10 +353,15 @@ def main():
                     for j in range(len(multioutput_data)):
                         if multioutput_data[j][i][0] == '*': to_print = False
                     if to_print:
-                        print(output_id[0][i] + ' ' + output_id[1][i], end = '\n')
-                        final_output += output_id[0][i] + ' ' + output_id[1][i] + '\n'
+                        print(output_id[0][i] + ' ' + output_id[1][i], end = ' ')
+                        final_output += output_id[0][i] + ' ' + output_id[1][i] + ' '
+                        for j in range(len(multioutput_data)):
+                            print(multioutput_data[j][i], end = '')
+                            final_output += multioutput_data[j][i]
+                        print('\n', end = '')
+                        final_output += '\n'
             ##輸出目前有哪些問卷
-            elif pattern == '6':    
+            elif pattern == '5':    
                 with open('survey_name.json', 'r', encoding="utf-8") as file:
                     survey_name = json.load(file)
                 with open('class_name.json', 'r', encoding='utf-8') as file:
