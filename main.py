@@ -232,9 +232,9 @@ def main():
             ## mode 1: create new file
             while(True):
                 if mode == '1':
-                    add_new_file()
                     path = input("請輸入數據之檔名: ")
                     input_data(path)
+                    add_new_file()
                     with open('survey_name.json', 'r', encoding='utf-8') as file:
                         survey_name = json.load(file)
                     with open('class_name_dict.json', 'r', encoding='utf-8') as file:
