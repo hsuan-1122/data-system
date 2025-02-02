@@ -88,32 +88,39 @@ def input_data(path):
 def w_data(n,m,l):
     blank = 0
     x = 0
+    new_name = []
+    new_account = []
     with open('list_data.json', 'r', encoding='utf-8') as file:
         list_data = json.load(file)
     with open(list_id[0], 'r', encoding="utf-8") as file:
         output_id[0] = json.load(file)
     with open(list_id[1], 'r', encoding="utf-8") as file:
         output_id[1] = json.load(file)
+    if output_id[1] != []:
+        for i in range(len(line_name)):
+            if line_name[i] not in output_id[1]:
+                new_name.append(line_name[i])
+                new_account.append(line_account[i])
+                blank += 1            #blank代表要加上的行數
+                store = line_data[i-x]
+                del line_data[i-x]
+                line_data.append(store)
+                x += 1
+    else:
+        new_name = line_name
+        new_account = line_account
     star = '* '
     for i in range(int(len(line_data[0])/2)-1):
         star = star + '* '
     for i in range(len(output_id[1])):
         if output_id[1][i] not in line_name:
             line_data.insert(i, star)
-    if output_id[1] != []:
-        for i in range(len(line_name)):
-            if line_name[i-x] in output_id[1]:
-                del line_name[i-x]
-                del line_account[i-x]
-                x += 1
-            else:
-                blank += 1            #blank代表要加上的行數
     with open(list_id[0], 'w', encoding="utf-8") as file:
-        output_id[0] = output_id[0] + line_account
+        output_id[0] = output_id[0] + new_account
         json.dump(output_id[0], file)
         line_account.clear()
     with open(list_id[1], 'w', encoding="utf-8") as file:
-        output_id[1] = output_id[1] + line_name
+        output_id[1] = output_id[1] + new_name
         json.dump(output_id[1], file)
         line_name.clear()
     with open(list_data[n][m][l]+'.json', 'w', encoding="utf-8") as file:
