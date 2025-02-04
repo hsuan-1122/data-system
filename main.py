@@ -265,8 +265,12 @@ def main():
                             survey_name = json.load(file)
                         with open('class_name_dict.json', 'r', encoding='utf-8') as file:
                             class_name_dict = json.load(file)
-                        with open(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]] + '.json', 'w', encoding='utf-8') as file:
-                            json.dump([], file)
+                        with open('list_data.json', 'r', encoding='utf-8') as file:
+                            list_data = json.load(file)
+                        with open('list_data.json', 'w', encoding='utf-8') as file:
+                            del list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]
+                            json.dump(list_data, file)
+                        os.remove(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json')
                         break
                     ## users enter garbage : skip this round
                     else: break
