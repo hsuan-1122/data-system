@@ -74,8 +74,9 @@ def input_data(path):
             stu_account = raw_data[0]
             stu_name = raw_data[1]
             stu_data = raw_data[2:]
+            # print(stu_data)
             for i in range(len(stu_data)):
-                if stu_data[i] == '':
+                if stu_data[i] == '' or stu_data[i] == ' ':
                     del stu_data[i:]
                     break
             string = ' '.join(stu_data)
@@ -109,9 +110,10 @@ def w_data(n,m,l):
     else:
         new_name = line_name
         new_account = line_account
-    star = '* '
-    for i in range(int(len(line_data[0])/2)-1):
-        star = star + '* '
+    star = ''
+    for i in range(len(line_data[1])):
+        if line_data[1][i] == ' ':
+            star = star + '* '
     for i in range(len(output_id[1])):
         if output_id[1][i] not in line_name:
             line_data.insert(i, star)
@@ -133,9 +135,10 @@ def w_data(n,m,l):
                     with open(list_data[a][b][c]+'.json', 'r', encoding="utf-8") as file:
                         output_data = json.load(file)
                     with open(list_data[a][b][c]+'.json', 'w', encoding="utf-8") as file:
-                        star = '* '
-                        for i in range(int(len(output_data[0])/2)-1):
-                            star = star + '* '
+                        star = ''
+                        for i in range(len(output_data[1])):
+                            if output_data[1][i] == ' ':
+                                star = star + '* '
                         for i in range(blank):
                             output_data.append(star)
                         json.dump(output_data, file)
