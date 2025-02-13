@@ -219,12 +219,11 @@ def output_data_f(n, m, l, i):
     global final_output
     with open('list_data.json', 'r', encoding='utf-8') as file:
         list_data = json.load(file)
-    with open(list_data[n][m][l]+'.json', 'r', encoding="utf-8") as file:
-        output_data = json.load(file)
-    print(output_data[i], end = '')
-    final_output += output_data[i]
-    with open('list_data.json', 'w', encoding='utf-8') as file:
-        json.dump(list_data, file)
+    if list_data[n][m][l] != "*":
+        with open(list_data[n][m][l]+'.json', 'r', encoding="utf-8") as file:
+            output_data = json.load(file)
+        print(output_data[i], end = '')
+        final_output += output_data[i]
 
 ##主程式
 def main():
@@ -267,11 +266,31 @@ def main():
                             survey_name = json.load(file)
                         with open('class_name_dict.json', 'r', encoding='utf-8') as file:
                             class_name_dict = json.load(file)  
-                        os.remove(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json')
-                        del list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]
+                        os.remove(list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]]+'.json')                        
+                        list_data[survey_name.index(survey)][grade][class_name_dict[survey+str(grade)+classname]] = "*"
+                        count = 0
+                        for i in range (4):
+                            for j in range (len(list_data[survey_name.index(survey)][i])) :
+                                if list_data[survey_name.index(survey)][i][j] == "*" :
+                                    count += 1
+                            if count == len(list_data[survey_name.index(survey)][i]) :
+                                list_data[survey_name.index(survey)][i].clear()
+                            count = 0
+                        if list_data[survey_name.index(survey)] == [[], [], [], []]:
+                            print("yes")
+                            k = survey_name.index(survey)
+                            print(k)
+                            del list_data[k]
+                            del survey_name[k]
+                        ## delete in class_name_dict
+                        del class_name_dict[survey + str(grade) + classname]
+                        ## delete from survey name
                         with open('list_data.json', 'w', encoding='utf-8') as file:
                             json.dump(list_data, file)
-
+                        with open('survey_name.json', 'w', encoding='utf-8') as file:
+                            json.dump(survey_name, file)
+                        with open('class_name_dict.json', 'w', encoding='utf-8') as file:
+                            json.dump(class_name_dict, file)
                         break
                     ## users enter garbage : skip this round
                     else: break
