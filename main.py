@@ -276,10 +276,8 @@ def main():
                             if count == len(list_data[survey_name.index(survey)][i]) :
                                 list_data[survey_name.index(survey)][i].clear()
                             count = 0
-                        if list_data[survey_name.index(survey)] == [[], [], [], []]:
-                            print("yes")
+                        if list_data[survey_name.index(survey)] == [[], [], [], []]
                             k = survey_name.index(survey)
-                            print(k)
                             del list_data[k]
                             del survey_name[k]
                         ## delete in class_name_dict
