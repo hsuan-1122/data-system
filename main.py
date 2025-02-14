@@ -223,7 +223,9 @@ def output_data_f(n, m, l, i):
         with open(list_data[n][m][l]+'.json', 'r', encoding="utf-8") as file:
             output_data = json.load(file)
         print(output_data[i], end = '')
+        print('|', end=" ")
         final_output += output_data[i]
+        final_output += '| '
 
 ##主程式
 def main():
@@ -276,7 +278,7 @@ def main():
                             if count == len(list_data[survey_name.index(survey)][i]) :
                                 list_data[survey_name.index(survey)][i].clear()
                             count = 0
-                        if list_data[survey_name.index(survey)] == [[], [], [], []]
+                        if list_data[survey_name.index(survey)] == [[], [], [], []]:
                             k = survey_name.index(survey)
                             del list_data[k]
                             del survey_name[k]
@@ -363,7 +365,9 @@ def main():
                         final_output += output_id[0][i] + ' ' + output_id[1][i] + ' '
                         for j in range(len(multioutput_data)):
                             print(multioutput_data[j][i], end = '')
+                            print('|', end=" ")
                             final_output += multioutput_data[j][i]
+                            final_output += '| '
                         print('\n', end = '')
                         final_output += '\n'
             ##輸出多份指定資料的共同受試者
@@ -389,7 +393,9 @@ def main():
                         final_output += output_id[0][i] + ' ' + output_id[1][i] + ' '
                         for j in range(len(multioutput_data)):
                             print(multioutput_data[j][i], end = '')
+                            print('|', end=" ")
                             final_output += multioutput_data[j][i]
+                            final_output += '| '
                         print('\n', end = '')
                         final_output += '\n'
             ##輸出目前有哪些問卷
